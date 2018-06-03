@@ -1,0 +1,43 @@
+[
+        {
+            "myFeatureId": "F21818",
+            "myFeatureName": "3- Third Feature - used to test Dependencies",
+            "dependentFeatureId": "F21817",
+            "dependentFeatureName": "2- Second New Feature that starts in 2017 Q1",
+            "dependencyType": "predecessor",
+            "columnIndex": 1
+        },
+
+        {
+            "myFeatureId": "F21816",
+            "myFeatureName": "1- New 2017 Q1 Feature",
+            "dependentFeatureId": "F21817",
+            "dependentFeatureName": "2- Second New Feature that starts in 2017 Q1",
+            "dependencyType": "successor",
+            "columnIndex": 2
+        },
+        {
+            "myFeatureId": "F21816",
+            "myFeatureName": "1- New 2017 Q1 Feature",
+            "dependentFeatureId": "F21819",
+            "dependentFeatureName": "4 - This feature is a predecessor to 1",
+            "dependencyType": "successor",
+            "columnIndex": 2
+        },
+        {
+            "myFeatureId": "F21817",
+            "myFeatureName": "2- Second New Feature that starts in 2017 Q1",
+            "dependentFeatureId": "F21816",
+            "dependentFeatureName": "1- New 2017 Q1 Feature",
+            "dependencyType": "predecessor",
+            "columnIndex": 2
+        },
+        {
+            "myFeatureId": "F21817",
+            "myFeatureName": "2- Second New Feature that starts in 2017 Q1",
+            "dependentFeatureId": "F21818",
+            "dependentFeatureName": "3- Third Feature - used to test Dependencies",
+            "dependencyType": "successor",
+            "columnIndex": 2
+        }
+    ]

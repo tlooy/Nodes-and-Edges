@@ -1,0 +1,5 @@
+[
+	{fromNode:"know",    toNode: "about",    "fromNodeColumn": 1, "toNodeColumn": 1},
+	{fromNode:"about",    toNode: "know",    "fromNodeColumn": 1, "toNodeColumn": 1},
+    {fromNode:"about",    toNode: "me",    "fromNodeColumn": 1, "toNodeColumn": 1}
+]	
