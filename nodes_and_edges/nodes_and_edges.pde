@@ -1,6 +1,7 @@
 // Code from Visualizing Data, First Edition, Copyright 2008 Ben Fry.
 // Based on the GraphLayout example by Sun Microsystems.
 // Modified by tlooy24@gmail.com March 2017
+// Added to GitHub repo June 3, 2018
 // TODO:
 //      Unselect a selected Feature
 //      Allow a selected Feature in each column
