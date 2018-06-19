@@ -7,54 +7,83 @@
 //      Parse multi level JSON file - parent to contain column data: column number, context and release
 //      replace swing message object with text from the selected Feature at the bottom of the column
 
-import static javax.swing.JOptionPane.*;
 
-int nodeCount;
-Node[] nodes = new Node[100];
-HashMap nodeTable = new HashMap();
-int margin = 30; // margin so our Features don't overlap the lines of the columns
-int topMargin = 100; // leave room for context and release data
-int bottomMargin = 100; // leave room for selected feature details
+// As part of the conversion to p5 (JavaScript):
+//    changed all void methods to function
+//    changed size to createCanvas in conversion to p5  
+//    changed int and float to var
+//    changed the way that Arrays are created
+//    removed the swing Pane component and replaced it with a JavaScript dialog box
+//    changed Java hashMap to Javascript Map
+//    changed static final color to var
+//    changed appending new edge to an array using 'push' 
+//    added preload to get fonts loaded before setup is run
+// import static javax.swing.JOptionPane.*;
+
+var nodeCount;
+// Node[] nodes = new Node[100];
+nodes = new Array(100);
+// HashMap nodeTable = new HashMap();
+nodeTable = new Map();
+var margin = 30; // margin so our Features don't overlap the lines of the columns
+var topMargin = 100; // leave room for context and release data
+var bottomMargin = 100; // leave room for selected feature details
 
 
 
-int edgeCount;
-Edge[] edges = new Edge[500];
+var edgeCount;
+//Edge[] edges = new Edge[500];
+edges = new Array(500);
 
-static final color myFeatureColor      = #63B8FF;
-static final color defaultFeatureColor = #F0C070;
-static final color selectColor         = #FF3030;
-static final color fixedColor          = #FF8080;
-static final color edgeColor           = #000000;
-static final color arrowHeadColor      = #000000;
-static final color labelColor          = #000000;
+// static final color myFeatureColor      = #63B8FF;
+var myFeatureColor      = "63B8FF";
+var defaultFeatureColor = "F0C070";
+var selectColor         = "FF3030";
+var fixedColor          = "FF8080";
+var edgeColor           = "000000";
+var arrowHeadColor      = "000000";
+var labelColor          = "000000";
 
-PFont font;
-JSONArray values;
+// PFont font;
+// JSONArray values;
 
-void setup() {
-  size(1200, 900);  
-  font = createFont("SansSerif", 10);
+var myFont;
+var values = [];
+function preload() {
+//  myFont = loadFont('./QumpellkaNo12.otf');
+  values = loadJSON("http://localhost:8000/Documents/GitHub/Nodes-and-Edges/nodes_and_edges/features.json");
+};
+
+function setup() { 
+  createCanvas(1200, 900); 
+//  font = createFont("SansSerif", 10);
 
   strokeWeight(1.5);
   
   stroke(100, 100, 100);
   fill(100, 100, 100);
-  loadJSONDataFromFile();
-}
+  loadJSONDataToTable();
+};
 
-void loadJSONDataFromFile() {
-  values = loadJSONArray("features.json");
-  for (int i = 0; i < values.size(); i++) {
-    JSONObject dependency = values.getJSONObject(i); 
-    addEdge(dependency);  }
-}
+function loadJSONDataToTable() { 
+//  var values = loadJSONArray("features.json
+console.table(values);
+console.log("Array Length", values.length);
+console.log("values.typeOf", values.typeOf);
+//  for (var i = 0; i < values.size(); i++) {
+  for (var i = 0; i < values.length(); i++) {
+//    JSONObject dependency = values.getJSONObject(i); 
+    var dependency = values.getJSONObject(i); 
+    addEdge(dependency);  
+  }
+};
 
-void addEdge(JSONObject dependency) {
-  String dependencyType                    = dependency.getString("dependencyType");
-  int columnIndex                          = dependency.getInt("columnIndex");
+//function addEdge(JSONObject dependency) { 
+function addEdge(dependency) { 
+  var dependencyType                       = dependency.getString("dependencyType");
+  var columnIndex                          = dependency.getInt("columnIndex");
 
-  Node myFeature                  = findNode(dependency.getString("myFeatureId"));
+  var myFeature                            = findNode(dependency.getString("myFeatureId"));
   myFeature.name                           = dependency.getString("myFeatureName");
   myFeature.percentDoneByStoryCount        = dependency.getInt("myFeaturePercentDoneByStoryCount");
   myFeature.percentDoneByStoryPlanEstimate = dependency.getInt("myFeaturePercentDoneByStoryPlanEstimate");
@@ -63,7 +92,7 @@ void addEdge(JSONObject dependency) {
   myFeature.featureColor                   = myFeatureColor; // override the default feature color if the feature is a 'myFeature'
   myFeature.increment(); 
   
-  Node dependentFeature                  = findNode(dependency.getString("dependentFeatureId"));
+  var dependentFeature                            = findNode(dependency.getString("dependentFeatureId"));
   dependentFeature.name                           = dependency.getString("dependentFeatureName");
   dependentFeature.percentDoneByStoryCount        = dependency.getInt("dependentFeaturePercentDoneByStoryCount");
   dependentFeature.percentDoneByStoryPlanEstimate = dependency.getInt("dependentFeaturePercentDoneByStoryPlanEstimate");
@@ -75,75 +104,86 @@ void addEdge(JSONObject dependency) {
   dependentFeature.increment();
 
 // TODO: do I get any value from counting the number of times an edge is created?  
-  for (int i = 0; i < edgeCount; i++) {
+  for (var i = 0; i < edgeCount; i++) {
     if (edges[i].myFeature == myFeature && edges[i].dependentFeature == dependentFeature) {
       edges[i].increment();
       return;
     }
   } 
   
-  Edge e = new Edge(myFeature, dependentFeature, dependencyType);
+  var e = new Edge(myFeature, dependentFeature, dependencyType);
   e.increment();
+  edges.push(e);
+/*
   if (edgeCount == edges.length) {
     edges = (Edge[]) expand(edges);
   }
   edges[edgeCount++] = e;
+*/
 }
 
 
-Node findNode(String featureId) {
-  Node n = (Node) nodeTable.get(featureId);
+// Node findNode(featureId) {
+function findNode(featureId) {
+  var n = nodeTable.get(featureId);
   if (n == null) {
     return addNode(featureId);
   }
   return n;
-}
+};
 
 
-Node addNode(String featureId) {
-  Node n = new Node(featureId);  
+// Node addNode(String featureId) {
+function addNode(featureId) {
+  var n = new Node(featureId);  
+/*
   if (nodeCount == nodes.length) {
     nodes = (Node[]) expand(nodes);
   }
-  nodeTable.put(featureId, n);
-  nodes[nodeCount++] = n;  
+*/
+//  nodeTable.put(featureId, n);
+  nodeTable.push(n);
+//  nodes[nodeCount++] = n;  
+  nodes.push(n);  
   return n;
-}
+};
 
 
-void draw() {
+function draw() { 
   background(255);
-  textFont(font);  
+//  textFont(myFont);  
   smooth();  
   line(width/3,   0, width/3,   height);
   line(width/1.5, 0, width/1.5, height);
 
-  for (int i = 0 ; i < edgeCount ; i++) {
+  for (var i = 0 ; i < edgeCount ; i++) {
     edges[i].relax();
   }
-  for (int i = 0; i < nodeCount; i++) {
+  for (var i = 0; i < nodeCount; i++) {
     nodes[i].relax();
   }
-  for (int i = 0; i < nodeCount; i++) {
+  for (var i = 0; i < nodeCount; i++) {
     nodes[i].update();
   }
-  for (int i = 0 ; i < nodeCount ; i++) {
+  for (var i = 0 ; i < nodeCount ; i++) {
     nodes[i].draw();
   }
-  for (int i = 0 ; i < edgeCount ; i++) {
+  for (var i = 0 ; i < edgeCount ; i++) {
     edges[i].draw();
   }
-}
+};
 
 
-Node selection; 
+// Node selection; 
+var selection; 
 
-void mousePressed() {
+function mousePressed() { 
   // Ignore anything greater than this distance
-  float closest = 20;
-  for (int i = 0; i < nodeCount; i++) {
-    Node n = nodes[i];
-    float d = dist(mouseX, mouseY, n.x, n.y);
+  var closest = 20;
+  for (var i = 0; i < nodeCount; i++) {
+//    Node n = nodes[i];
+    var n = nodes[i];
+    var d = dist(mouseX, mouseY, n.x, n.y);
     if (d < closest) {
       selection = n;
       closest = d;
@@ -157,26 +197,32 @@ void mousePressed() {
       selection.fixed = false;
     }
   }
-}
+};
 
-void mouseClicked() {
+function mouseClicked() {
   // Ignore anything greater than this distance
-  float closest = 20;
-  for (int i = 0; i < nodeCount; i++) {
-    Node n = nodes[i];
-    float d = dist(mouseX, mouseY, n.x, n.y);
+  var closest = 20;
+  for (var i = 0; i < nodeCount; i++) {
+//    Node n = nodes[i];
+    var n = nodes[i];
+    var d = dist(mouseX, mouseY, n.x, n.y);
     if (d < closest) {
       selection = n;
       closest = d;
       selection.selected = true;
+/*      
       showMessageDialog(null, selection.featureId + ": " + selection.name + 
                               "\nPercent Complete by Story Points: " + selection.percentDoneByStoryPlanEstimate + "%" +
                               "\nPercent Complete by Story Count: "  + selection.percentDoneByStoryCount + "%");
+*/
+      alert(selection.featureId + ": " + selection.name + 
+            "\nPercent Complete by Story Points: " + selection.percentDoneByStoryPlanEstimate + "%" +
+            "\nPercent Complete by Story Count: "  + selection.percentDoneByStoryCount + "%");
     }
   }
-}
+};
 
-void mouseDragged() { 
+function mouseDragged() { 
   if (selection != null) {
     selection.x = mouseX;
     selection.y = mouseY;
@@ -190,8 +236,8 @@ void mouseDragged() {
     selection.y = constrain(selection.y, 0 + topMargin, height - bottomMargin);
     
   }
-}
+};
 
-void mouseReleased() {
+function mouseReleased() {
   selection = null;
-}
+};

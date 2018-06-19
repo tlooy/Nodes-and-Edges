@@ -7,7 +7,7 @@ class Edge {
   Node myFeature;
   Node dependentFeature;
   float len;
-  int count;
+  var count;
   String dependencyType;
 
   Edge(Node myFeature, Node dependentFeature, String dependencyType) {
@@ -18,12 +18,12 @@ class Edge {
   }
   
   
-  void increment() {
+  function increment() {
     count++;
   }
   
   
-  void relax() {
+  function relax() {
     float vx = dependentFeature.x - myFeature.x;
     float vy = dependentFeature.y - myFeature.y;
     float d = mag(vx, vy);
@@ -39,7 +39,7 @@ class Edge {
   }
 
 
-  void draw() {
+  function draw() {
     stroke(edgeColor);
     strokeWeight(1.0);
 

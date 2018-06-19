@@ -6,16 +6,16 @@
 class Node {
   String featureId;
   String name;
-  int percentDoneByStoryCount;
-  int percentDoneByStoryPlanEstimate;
+  var percentDoneByStoryCount;
+  var percentDoneByStoryPlanEstimate;
   color featureColor;
   
   float x, y;
   float dx, dy;
   boolean fixed;
   boolean selected;
-  int count;
-  int columnIndex = 0;
+  var count;
+  var columnIndex = 0;
 
 
   Node(String label) {
@@ -31,16 +31,16 @@ class Node {
     y = random(0 + topMargin, height - bottomMargin);
   }
     
-  void increment() {
+  function increment() {
     count++;
   }
   
   
-  void relax() {
+  function relax() {
     float ddx = 0;
     float ddy = 0;
 
-    for (int j = 0; j < nodeCount; j++) {
+    for (var j = 0; j < nodeCount; j++) {
       Node n = nodes[j];
       if (n != this) {
         float vx = x - n.x;
@@ -63,7 +63,7 @@ class Node {
   }
 
 
-  void update() {
+  function update() {
     if (!fixed) {      
       x += constrain(dx, -5, 5);
       y += constrain(dy, -5, 5);
@@ -81,7 +81,7 @@ class Node {
   }
 
 
-  void draw() {
+  function draw() {
     fill(featureColor);
     stroke(0);
     if (selected) {
