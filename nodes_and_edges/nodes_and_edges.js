@@ -45,13 +45,14 @@ var arrowHeadColor      = "000000";
 var labelColor          = "000000";
 
 // PFont font;
-// JSONArray values;
-
+// JSONArray featureValues;
+var self = this;
 var myFont;
-var values = [];
+var featureValues = [];
+
 function preload() {
 //  myFont = loadFont('./QumpellkaNo12.otf');
-  values = loadJSON("http://localhost:8000/Documents/GitHub/Nodes-and-Edges/nodes_and_edges/features.json");
+  self.featureValues = loadJSON("http://localhost:8000/Documents/GitHub/Nodes-and-Edges/nodes_and_edges/features.json");
 };
 
 function setup() { 
@@ -66,14 +67,19 @@ function setup() {
 };
 
 function loadJSONDataToTable() { 
-//  var values = loadJSONArray("features.json
-console.table(values);
-console.log("Array Length", values.length);
-console.log("values.typeOf", values.typeOf);
-//  for (var i = 0; i < values.size(); i++) {
-  for (var i = 0; i < values.length(); i++) {
-//    JSONObject dependency = values.getJSONObject(i); 
-    var dependency = values.getJSONObject(i); 
+  console.table(self.featureValues);
+  var featureArray;
+  for (var key in self.featureValues) {
+    if (!featureArray) {
+      featureArray = [self.featureValues[key]];
+    } else {
+      featureArray.push(self.featureValues[key]);
+    }
+  }
+console.log("featureArray", featureArray);
+  for (var i = 0; i < self.featureValues.length; i++) {
+console.log("In for loop", i);
+    var dependency = self.featureValues.getJSONObject(i); 
     addEdge(dependency);  
   }
 };
