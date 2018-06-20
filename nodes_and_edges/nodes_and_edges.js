@@ -68,40 +68,40 @@ function setup() {
 
 function loadJSONDataToTable() { 
   console.table(self.featureValues);
-  var featureArray;
+  var featureTable;
   for (var key in self.featureValues) {
-    if (!featureArray) {
-      featureArray = [self.featureValues[key]];
+    if (!featureTable) {
+      featureTable = [self.featureValues[key]];
     } else {
-      featureArray.push(self.featureValues[key]);
+      featureTable.push(self.featureValues[key]);
     }
   }
-console.log("featureArray", featureArray);
-  for (var i = 0; i < self.featureValues.length; i++) {
-console.log("In for loop", i);
-    var dependency = self.featureValues.getJSONObject(i); 
+  for (var i = 0; i < featureTable.length; i++) {
+console.log("In for loop", featureTable[i]);
+    var dependency = featureTable[i]; 
+//    var dependency = JSON.parse(featureTable[i]); 
     addEdge(dependency);  
   }
 };
 
 //function addEdge(JSONObject dependency) { 
 function addEdge(dependency) { 
-  var dependencyType                       = dependency.getString("dependencyType");
-  var columnIndex                          = dependency.getInt("columnIndex");
+  var dependencyType                       = dependency["dependencyType"];
+  var columnIndex                          = dependency["columnIndex"];
 
-  var myFeature                            = findNode(dependency.getString("myFeatureId"));
-  myFeature.name                           = dependency.getString("myFeatureName");
-  myFeature.percentDoneByStoryCount        = dependency.getInt("myFeaturePercentDoneByStoryCount");
-  myFeature.percentDoneByStoryPlanEstimate = dependency.getInt("myFeaturePercentDoneByStoryPlanEstimate");
+  var myFeature                            = findNode(dependency["myFeatureId"]);
+  myFeature.name                           = dependency["myFeatureName"];
+  myFeature.percentDoneByStoryCount        = dependency["myFeaturePercentDoneByStoryCount"];
+  myFeature.percentDoneByStoryPlanEstimate = dependency["myFeaturePercentDoneByStoryPlanEstimate"];
   
-  myFeature.columnIndex                    = dependency.getInt("columnIndex");  // always override the columnIndex to make sure that it is defined by a myFeature
+  myFeature.columnIndex                    = dependency["columnIndex"];  // always override the columnIndex to make sure that it is defined by a myFeature
   myFeature.featureColor                   = myFeatureColor; // override the default feature color if the feature is a 'myFeature'
   myFeature.increment(); 
   
-  var dependentFeature                            = findNode(dependency.getString("dependentFeatureId"));
-  dependentFeature.name                           = dependency.getString("dependentFeatureName");
-  dependentFeature.percentDoneByStoryCount        = dependency.getInt("dependentFeaturePercentDoneByStoryCount");
-  dependentFeature.percentDoneByStoryPlanEstimate = dependency.getInt("dependentFeaturePercentDoneByStoryPlanEstimate");
+  var dependentFeature                            = findNode(dependency["dependentFeatureId"]);
+  dependentFeature.name                           = dependency["dependentFeatureName"];
+  dependentFeature.percentDoneByStoryCount        = dependency["dependentFeaturePercentDoneByStoryCount"];
+  dependentFeature.percentDoneByStoryPlanEstimate = dependency["dependentFeaturePercentDoneByStoryPlanEstimate"];
   if (dependentFeature.columnIndex == 0) {        // only set the columnIndex for a dependent Feature if it doesn't have one yet... 
       dependentFeature.columnIndex = columnIndex; // never override as the Feature my be a myFeature with a different columnIndex
   }
@@ -247,3 +247,114 @@ function mouseDragged() {
 function mouseReleased() {
   selection = null;
 };
+
+
+/* class Node
+class Node {
+  String featureId;
+  String name;
+  var percentDoneByStoryCount;
+  var percentDoneByStoryPlanEstimate;
+  color featureColor;
+  
+  float x, y;
+  float dx, dy;
+  boolean fixed;
+  boolean selected;
+  var count;
+  var columnIndex = 0;
+*/
+
+function Node(label) {
+    this.featureId = label;
+    this.featureColor = defaultFeatureColor;
+
+    var name;
+    var percentDoneByStoryCount;
+    var percentDoneByStoryPlanEstimate;
+    var featureColor;
+  
+    var x, y; //float 
+    var dx, dy; //float 
+    var fixed; // boolean
+    var selected; // boolean
+    var count;
+    var columnIndex = 0;
+
+    switch (columnIndex) {
+      case 1:  x = random(0 + margin, (width/3) - margin); break;
+      case 2:  x = random((width/3) + margin, (width/1.5) - margin); break;
+      case 3:  x = random((width/1.5) + margin, width - margin); break;
+      default: x = random(0 + margin, width - margin);
+    };
+    y = random(0 + topMargin, height - bottomMargin);
+};
+    
+Node.prototype.increment = function() {
+    count++;
+};
+  
+  
+Node.prototype.relax = function() {
+    ddx = 0; // float
+    ddy = 0; // float
+
+    for (var j = 0; j < nodeCount; j++) {
+//      Node n = nodes[j]; 
+      n = nodes[j]; 
+      if (n != this) {
+        vx = x - n.x; // float
+        vy = y - n.y; // float
+        lensq = vx * vx + vy * vy; // float
+        if (lensq == 0) {
+          ddx += random(1);
+          ddy += random(1);
+        } else if (lensq < 100*100) {
+          ddx += vx / lensq;
+          ddy += vy / lensq;
+        }
+      }
+    }
+    dlen = mag(ddx, ddy) / 2; // float
+    if (dlen > 0) {
+      dx += ddx / dlen;
+      dy += ddy / dlen;
+    }
+};
+
+
+Node.prototype.update = function() {
+    if (!fixed) {      
+      x += constrain(dx, -5, 5);
+      y += constrain(dy, -5, 5);
+      
+      switch (columnIndex) {
+        case 1:  x = constrain(x, 0 + margin, (width/3) - margin); break;
+        case 2:  x = constrain(x, (width/3) + margin, (width/1.5) - margin); break;
+        case 3:  x = constrain(x, (width/1.5) + margin, width - margin); break;
+        default: x = constrain(x, 0 + margin, width - margin);
+      };
+      y = constrain(y, 0 + topMargin, height - bottomMargin);
+    }
+    dx /= 2;
+    dy /= 2;
+};
+
+
+Node.prototype.draw = function() {
+    fill(featureColor);
+    stroke(0);
+    if (selected) {
+      strokeWeight(1.5);
+    } else {
+    strokeWeight(0.5);
+  }
+    
+    ellipse(x, y, 50, 50); // make all Features the same size
+    fill(labelColor);
+    textAlign(CENTER, BOTTOM);
+    text(featureId, x, y);
+
+};
+
+
