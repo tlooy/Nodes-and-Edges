@@ -148,7 +148,7 @@ function addNode(featureId) {
   }
 */
 //  nodeTable.put(featureId, n);
-  nodeTable.push(n);
+  nodeTable.set(featureId, n);
 //  nodes[nodeCount++] = n;  
   nodes.push(n);  
   return n;
@@ -291,7 +291,7 @@ function Node(label) {
 };
     
 Node.prototype.increment = function() {
-    count++;
+    this.count++;
 };
   
   
@@ -357,4 +357,50 @@ Node.prototype.draw = function() {
 
 };
 
+function Edge(myFeature, dependentFeature, dependencyType) {
+  var myFeature; // Node
+  var dependentFeature; // Node
+  var len; // float
+  var count;
+  var dependencyType;
 
+//  Edge(Node myFeature, Node dependentFeature, String dependencyType) {
+//  Edge(myFeature, dependentFeature, dependencyType) {
+    this.myFeature = myFeature;
+    this.dependentFeature = dependentFeature;
+    this.dependencyType = dependencyType;
+    this.len = 150;
+//  }
+};  
+  
+Edge.prototype.increment = function() {
+  this.count++;
+};
+  
+  
+Edge.prototype.relax = function() {
+  var vx = dependentFeature.x - myFeature.x;
+  var vy = dependentFeature.y - myFeature.y;
+  var d = mag(vx, vy);
+  if (d > 0) {
+    var f = (len - d) / (d * 3);
+    var dx = f * vx;
+    var dy = f * vy;
+    dependentFeature.dx += dx;
+    dependentFeature.dy += dy;
+    myFeature.dx -= dx;
+    myFeature.dy -= dy;
+  }
+};
+
+
+Edge.prototype.draw = function() {
+  stroke(edgeColor);
+  strokeWeight(1.0);
+
+  if (dependencyType.equals("predecessor")) {
+    drawArrow(myFeature.x, myFeature.y, dependentFeature.x, dependentFeature.y, 8, 0, false);
+  } else {
+    drawArrow(myFeature.x, myFeature.y, dependentFeature.x, dependentFeature.y, 0, 8, false);
+  }    
+};
