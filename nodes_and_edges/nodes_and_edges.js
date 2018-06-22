@@ -20,7 +20,8 @@
 //    added preload to get fonts loaded before setup is run
 // import static javax.swing.JOptionPane.*;
 
-var nodeCount;
+var nodeCount = 0;
+var edgeCount = 0;
 // Node[] nodes = new Node[100];
 nodes = new Array(100);
 // HashMap nodeTable = new HashMap();
@@ -29,11 +30,8 @@ var margin = 30; // margin so our Features don't overlap the lines of the column
 var topMargin = 100; // leave room for context and release data
 var bottomMargin = 100; // leave room for selected feature details
 
-
-
-var edgeCount;
 //Edge[] edges = new Edge[500];
-edges = new Array(500);
+edges = new Array();
 
 // static final color myFeatureColor      = #63B8FF;
 var myFeatureColor      = "63B8FF";
@@ -56,6 +54,7 @@ function preload() {
 };
 
 function setup() { 
+  loadJSONDataToTable();
   createCanvas(1200, 900); 
 //  font = createFont("SansSerif", 10);
 
@@ -63,7 +62,6 @@ function setup() {
   
   stroke(100, 100, 100);
   fill(100, 100, 100);
-  loadJSONDataToTable();
 };
 
 function loadJSONDataToTable() { 
@@ -96,6 +94,8 @@ function addEdge(dependency) {
   
   myFeature.columnIndex                    = dependency["columnIndex"];  // always override the columnIndex to make sure that it is defined by a myFeature
   myFeature.featureColor                   = myFeatureColor; // override the default feature color if the feature is a 'myFeature'
+  myFeature.x = 0;
+  myFeature.y = 0;
   myFeature.increment(); 
   
   var dependentFeature                            = findNode(dependency["dependentFeatureId"]);
@@ -105,27 +105,25 @@ function addEdge(dependency) {
   if (dependentFeature.columnIndex == 0) {        // only set the columnIndex for a dependent Feature if it doesn't have one yet... 
       dependentFeature.columnIndex = columnIndex; // never override as the Feature my be a myFeature with a different columnIndex
   }
-  
-// TODO: do I get any value from knowing the number of times a Feature is referenced?  
+  // TODO: do I get any value from knowing the number of times a Feature is referenced?  
+  dependentFeature.x = 0;
+  dependentFeature.y = 0;
   dependentFeature.increment();
 
 // TODO: do I get any value from counting the number of times an edge is created?  
-  for (var i = 0; i < edgeCount; i++) {
-    if (edges[i].myFeature == myFeature && edges[i].dependentFeature == dependentFeature) {
-      edges[i].increment();
+console.log("self.edgeCount", self.edgeCount);
+console.log("self.edges", self.edges);
+  for (var i = 0; i < self.edgeCount; i++) {
+    if (self.edges[i].myFeature == myFeature && self.edges[i].dependentFeature == dependentFeature) {
+      self.edges[i].increment();
       return;
     }
   } 
   
   var e = new Edge(myFeature, dependentFeature, dependencyType);
   e.increment();
-  edges.push(e);
-/*
-  if (edgeCount == edges.length) {
-    edges = (Edge[]) expand(edges);
-  }
-  edges[edgeCount++] = e;
-*/
+  self.edges.push(e);
+  self.edgeCount++;
 }
 
 
@@ -162,8 +160,10 @@ function draw() {
   line(width/3,   0, width/3,   height);
   line(width/1.5, 0, width/1.5, height);
 
-  for (var i = 0 ; i < edgeCount ; i++) {
-    edges[i].relax();
+//  for (var i = 0 ; i < edgeCount ; i++) {
+  for (var i = 0 ; i < self.edges.length ; i++) {
+ console.log("I am in draw...edges[i]", self.edges[i]);
+    self.edges[i].relax();
   }
   for (var i = 0; i < nodeCount; i++) {
     nodes[i].relax();
@@ -274,7 +274,8 @@ function Node(label) {
     var percentDoneByStoryPlanEstimate;
     var featureColor;
   
-    var x, y; //float 
+    var x = 0;
+    var y = 0; //float 
     var dx, dy; //float 
     var fixed; // boolean
     var selected; // boolean
@@ -379,8 +380,8 @@ Edge.prototype.increment = function() {
   
   
 Edge.prototype.relax = function() {
-  var vx = dependentFeature.x - myFeature.x;
-  var vy = dependentFeature.y - myFeature.y;
+  var vx = this.dependentFeature.x - this.myFeature.x;
+  var vy = this.dependentFeature.y - this.myFeature.y;
   var d = mag(vx, vy);
   if (d > 0) {
     var f = (len - d) / (d * 3);
@@ -398,9 +399,73 @@ Edge.prototype.draw = function() {
   stroke(edgeColor);
   strokeWeight(1.0);
 
-  if (dependencyType.equals("predecessor")) {
-    drawArrow(myFeature.x, myFeature.y, dependentFeature.x, dependentFeature.y, 8, 0, false);
+  if (this.dependencyType === "predecessor") {
+    drawArrow(this.myFeature.x, this.myFeature.y, this.dependentFeature.x, this.dependentFeature.y, 8, 0, false);
   } else {
-    drawArrow(myFeature.x, myFeature.y, dependentFeature.x, dependentFeature.y, 0, 8, false);
+    drawArrow(this.myFeature.x, this.myFeature.y, this.dependentFeature.x, this.dependentFeature.y, 0, 8, false);
   }    
 };
+
+function drawArrow(x0, y0, x1, y1, beginHeadSize, endHeadSize, filled) {
+
+  var d = new p5.Vector(x1 - x0, y1 - y0);
+  d.normalize();
+  
+  coeff = 1.5; // float
+  
+  strokeCap(SQUARE);
+  
+  line(x0+d.x*beginHeadSize*coeff / (filled ? 1.0 : 1.75), 
+        y0+d.y*beginHeadSize*coeff/ (filled ? 1.0 : 1.75), 
+        x1-d.x*endHeadSize*coeff  / (filled ? 1.0 : 1.75), 
+        y1-d.y*endHeadSize*coeff  / (filled ? 1.0 : 1.75));
+  
+  angle = atan2(d.y, d.x);
+  
+  if (filled) {
+    // begin head
+    pushMatrix();
+    translate(x0, y0);
+    rotate(angle+PI);
+
+    beginShape();
+    fill(arrowHeadColor);
+    triangle(-beginHeadSize*coeff, -beginHeadSize, 
+             -beginHeadSize*coeff, beginHeadSize, 
+             0, 0);
+    endShape();
+    
+    popMatrix();
+    // end head
+    pushMatrix();
+    translate(x1, y1);
+    rotate(angle);
+    triangle(-endHeadSize*coeff, -endHeadSize, 
+             -endHeadSize*coeff, endHeadSize, 
+             0, 0);
+    popMatrix();
+  } 
+  else {
+    // begin head
+//    pushMatrix();
+    push();
+    translate(x0, y0);
+    rotate(angle+PI);
+    strokeCap(ROUND);
+    line(-beginHeadSize*coeff, -beginHeadSize, 0, 0);
+    line(-beginHeadSize*coeff, beginHeadSize, 0, 0);
+//    popMatrix();
+    pop();
+    // end head
+//    pushMatrix();
+    push();
+    translate(x1, y1);
+    rotate(angle);
+    strokeCap(ROUND);
+    line(-endHeadSize*coeff, -endHeadSize, 0, 0);
+    line(-endHeadSize*coeff, endHeadSize, 0, 0);
+//    popMatrix();
+    pop();
+  }
+};
+
