@@ -34,13 +34,13 @@ var bottomMargin = 100; // leave room for selected feature details
 edges = new Array();
 
 // static final color myFeatureColor      = #63B8FF;
-var myFeatureColor      = "63B8FF";
-var defaultFeatureColor = "F0C070";
-var selectColor         = "FF3030";
-var fixedColor          = "FF8080";
-var edgeColor           = "000000";
-var arrowHeadColor      = "000000";
-var labelColor          = "000000";
+var myFeatureColor      = "#63B8FF";
+var defaultFeatureColor = "#F0C070";
+var selectColor         = "#FF3030";
+var fixedColor          = "#FF8080";
+var edgeColor           = "#000000";
+var arrowHeadColor      = "#000000";
+var labelColor          = "#000000";
 
 // PFont font;
 // JSONArray featureValues;
@@ -75,14 +75,11 @@ function loadJSONDataToTable() {
     }
   }
   for (var i = 0; i < featureTable.length; i++) {
-console.log("In for loop", featureTable[i]);
     var dependency = featureTable[i]; 
-//    var dependency = JSON.parse(featureTable[i]); 
     addEdge(dependency);  
   }
 };
 
-//function addEdge(JSONObject dependency) { 
 function addEdge(dependency) { 
   var dependencyType                       = dependency["dependencyType"];
   var columnIndex                          = dependency["columnIndex"];
@@ -183,21 +180,22 @@ var selection;
 function mousePressed() { 
   // Ignore anything greater than this distance
   var closest = 20;
-  for (var i = 0; i < nodeCount; i++) {
+//  for (var i = 0; i < nodeCount; i++) {
+  for (var i = 0; i < nodes.length; i++) {
 //    Node n = nodes[i];
     var n = nodes[i];
     var d = dist(mouseX, mouseY, n.x, n.y);
     if (d < closest) {
-      selection = n;
+      self.selection = n;
       closest = d;
     }
   }
-  if (selection != null) {
+  if (self.selection != null) {
     if (mouseButton == LEFT) {
-      selection.fixed = true;
-      selection.selected = true;
+      self.selection.fixed = true;
+      self.selection.selected = true;
     } else if (mouseButton == RIGHT) {
-      selection.fixed = false;
+      self.selection.fixed = false;
     }
   }
 };
@@ -210,39 +208,39 @@ function mouseClicked() {
     var n = nodes[i];
     var d = dist(mouseX, mouseY, n.x, n.y);
     if (d < closest) {
-      selection = n;
+      self.selection = n;
       closest = d;
-      selection.selected = true;
+      self.selection.selected = true;
 /*      
       showMessageDialog(null, selection.featureId + ": " + selection.name + 
                               "\nPercent Complete by Story Points: " + selection.percentDoneByStoryPlanEstimate + "%" +
                               "\nPercent Complete by Story Count: "  + selection.percentDoneByStoryCount + "%");
 */
-      alert(selection.featureId + ": " + selection.name + 
-            "\nPercent Complete by Story Points: " + selection.percentDoneByStoryPlanEstimate + "%" +
-            "\nPercent Complete by Story Count: "  + selection.percentDoneByStoryCount + "%");
+      alert(self.selection.featureId + ": " + self.selection.name + 
+            "\nPercent Complete by Story Points: " + self.selection.percentDoneByStoryPlanEstimate + "%" +
+            "\nPercent Complete by Story Count: "  + self.selection.percentDoneByStoryCount + "%");
     }
   }
 };
 
 function mouseDragged() { 
-  if (selection != null) {
-    selection.x = mouseX;
-    selection.y = mouseY;
+  if (self.selection != null) {
+    self.selection.x = mouseX;
+    self.selection.y = mouseY;
     
-    switch (selection.columnIndex) { // this where we put the code to keep nodes in their columns and inside the margins
-      case 1:  selection.x = constrain(selection.x, 0 + margin, (width/3) - margin); break;
-      case 2:  selection.x = constrain(selection.x, (width/3) + margin, (width/1.5) - margin); break;
-      case 3:  selection.x = constrain(selection.x, (width/1.5) + margin, width - margin); break;
-      default: selection.x = constrain(selection.x, 0 + margin, width - margin);
+    switch (self.selection.columnIndex) { // this where we put the code to keep nodes in their columns and inside the margins
+      case 1:  self.selection.x = constrain(self.selection.x, 0 + margin, (width/3) - margin); break;
+      case 2:  self.selection.x = constrain(self.selection.x, (width/3) + margin, (width/1.5) - margin); break;
+      case 3:  self.selection.x = constrain(self.selection.x, (width/1.5) + margin, width - margin); break;
+      default: self.selection.x = constrain(self.selection.x, 0 + margin, width - margin);
     };
-    selection.y = constrain(selection.y, 0 + topMargin, height - bottomMargin);
+    self.selection.y = constrain(self.selection.y, 0 + topMargin, height - bottomMargin);
     
   }
 };
 
 function mouseReleased() {
-  selection = null;
+  self.selection = null;
 };
 
 
@@ -264,12 +262,12 @@ class Node {
 
 function Node(label) {
     this.featureId = label;
-    this.featureColor = defaultFeatureColor;
+    this.featureColor = self.defaultFeatureColor;
 
     var name;
     var percentDoneByStoryCount;
     var percentDoneByStoryPlanEstimate;
-    var featureColor;
+//    var featureColor;
   
     var x, y; //float 
     var dx, dy; //float 
@@ -348,7 +346,9 @@ Node.prototype.draw = function() {
   }
     
     ellipse(this.x, this.y, 50, 50); // make all Features the same size
-    fill(labelColor);
+    console.log("self.labelColor", self.labelColor);
+    fill(self.labelColor);
+//    fill(0,0,0,0);
     textAlign(CENTER, BOTTOM);
     text(this.featureId, this.x, this.y);
 
@@ -392,7 +392,7 @@ Edge.prototype.relax = function() {
 
 
 Edge.prototype.draw = function() {
-  stroke(edgeColor);
+  stroke(self.edgeColor);
   strokeWeight(1.0);
 
   if (this.dependencyType === "predecessor") {
@@ -403,43 +403,46 @@ Edge.prototype.draw = function() {
 };
 
 function drawArrow(x0, y0, x1, y1, beginHeadSize, endHeadSize, filled) {
-
   var d = new p5.Vector(x1 - x0, y1 - y0);
   d.normalize();
   
-  coeff = 1.5; // float
+  var coeff = 1.5; // float
   
   strokeCap(SQUARE);
   
-  line(x0+d.x*beginHeadSize*coeff / (filled ? 1.0 : 1.75), 
-        y0+d.y*beginHeadSize*coeff/ (filled ? 1.0 : 1.75), 
-        x1-d.x*endHeadSize*coeff  / (filled ? 1.0 : 1.75), 
-        y1-d.y*endHeadSize*coeff  / (filled ? 1.0 : 1.75));
+  line( x0+d.x*beginHeadSize*coeff / (filled ? 1.0 : 1.75), 
+        y0+d.y*beginHeadSize*coeff / (filled ? 1.0 : 1.75), 
+        x1-d.x*endHeadSize*coeff   / (filled ? 1.0 : 1.75), 
+        y1-d.y*endHeadSize*coeff   / (filled ? 1.0 : 1.75));
   
-  angle = atan2(d.y, d.x);
+  var angle = atan2(d.y, d.x);
   
   if (filled) {
     // begin head
-    pushMatrix();
+//    pushMatrix();
+    push();
     translate(x0, y0);
     rotate(angle+PI);
 
     beginShape();
-    fill(arrowHeadColor);
+    fill(self.arrowHeadColor);
     triangle(-beginHeadSize*coeff, -beginHeadSize, 
              -beginHeadSize*coeff, beginHeadSize, 
              0, 0);
     endShape();
     
-    popMatrix();
+//    popMatrix();
+    pop();
     // end head
-    pushMatrix();
+//    pushMatrix();
+    push();
     translate(x1, y1);
     rotate(angle);
     triangle(-endHeadSize*coeff, -endHeadSize, 
              -endHeadSize*coeff, endHeadSize, 
              0, 0);
-    popMatrix();
+//    popMatrix();
+    pop();
   } 
   else {
     // begin head
