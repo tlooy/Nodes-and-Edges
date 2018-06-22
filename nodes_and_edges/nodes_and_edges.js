@@ -203,7 +203,7 @@ function mousePressed() {
 function mouseClicked() {
   // Ignore anything greater than this distance
   var closest = 20;
-  for (var i = 0; i < nodeCount; i++) {
+  for (var i = 0; i < nodes.length; i++) {
 //    Node n = nodes[i];
     var n = nodes[i];
     var d = dist(mouseX, mouseY, n.x, n.y);
