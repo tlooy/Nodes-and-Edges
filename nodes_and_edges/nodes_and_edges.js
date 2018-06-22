@@ -23,7 +23,7 @@
 var nodeCount = 0;
 var edgeCount = 0;
 // Node[] nodes = new Node[100];
-nodes = new Array(100);
+nodes = new Array();
 // HashMap nodeTable = new HashMap();
 nodeTable = new Map();
 var margin = 30; // margin so our Features don't overlap the lines of the columns
@@ -94,8 +94,7 @@ function addEdge(dependency) {
   
   myFeature.columnIndex                    = dependency["columnIndex"];  // always override the columnIndex to make sure that it is defined by a myFeature
   myFeature.featureColor                   = myFeatureColor; // override the default feature color if the feature is a 'myFeature'
-  myFeature.x = 0;
-  myFeature.y = 0;
+  myFeature.x = myFeature.y = myFeature.dx = myFeature.dy = 0;
   myFeature.increment(); 
   
   var dependentFeature                            = findNode(dependency["dependentFeatureId"]);
@@ -106,8 +105,7 @@ function addEdge(dependency) {
       dependentFeature.columnIndex = columnIndex; // never override as the Feature my be a myFeature with a different columnIndex
   }
   // TODO: do I get any value from knowing the number of times a Feature is referenced?  
-  dependentFeature.x = 0;
-  dependentFeature.y = 0;
+  dependentFeature.x = dependentFeature.y = dependentFeature.dx = dependentFeature.dy = 0;
   dependentFeature.increment();
 
 // TODO: do I get any value from counting the number of times an edge is created?  
@@ -162,19 +160,18 @@ function draw() {
 
 //  for (var i = 0 ; i < edgeCount ; i++) {
   for (var i = 0 ; i < self.edges.length ; i++) {
- console.log("I am in draw...edges[i]", self.edges[i]);
     self.edges[i].relax();
   }
-  for (var i = 0; i < nodeCount; i++) {
+  for (var i = 0 ; i < self.nodes.length ; i++) {
     nodes[i].relax();
   }
-  for (var i = 0; i < nodeCount; i++) {
+  for (var i = 0 ; i < self.nodes.length ; i++) {
     nodes[i].update();
   }
-  for (var i = 0 ; i < nodeCount ; i++) {
+  for (var i = 0 ; i < self.nodes.length ; i++) {
     nodes[i].draw();
   }
-  for (var i = 0 ; i < edgeCount ; i++) {
+  for (var i = 0 ; i < self.edges.length ; i++) {
     edges[i].draw();
   }
 };
@@ -274,8 +271,7 @@ function Node(label) {
     var percentDoneByStoryPlanEstimate;
     var featureColor;
   
-    var x = 0;
-    var y = 0; //float 
+    var x, y; //float 
     var dx, dy; //float 
     var fixed; // boolean
     var selected; // boolean
@@ -318,43 +314,43 @@ Node.prototype.relax = function() {
     }
     dlen = mag(ddx, ddy) / 2; // float
     if (dlen > 0) {
-      dx += ddx / dlen;
-      dy += ddy / dlen;
+      this.dx += ddx / dlen;
+      this.dy += ddy / dlen;
     }
 };
 
 
 Node.prototype.update = function() {
-    if (!fixed) {      
-      x += constrain(dx, -5, 5);
-      y += constrain(dy, -5, 5);
+    if (!this.fixed) {      
+      this.x += constrain(this.dx, -5, 5);
+      this.y += constrain(this.dy, -5, 5);
       
-      switch (columnIndex) {
-        case 1:  x = constrain(x, 0 + margin, (width/3) - margin); break;
-        case 2:  x = constrain(x, (width/3) + margin, (width/1.5) - margin); break;
-        case 3:  x = constrain(x, (width/1.5) + margin, width - margin); break;
-        default: x = constrain(x, 0 + margin, width - margin);
+      switch (this.columnIndex) {
+        case 1:  this.x = constrain(this.x, 0 + margin, (width/3) - margin); break;
+        case 2:  this.x = constrain(this.x, (width/3) + margin, (width/1.5) - margin); break;
+        case 3:  this.x = constrain(this.x, (width/1.5) + margin, width - margin); break;
+        default: this.x = constrain(this.x, 0 + margin, width - margin);
       };
-      y = constrain(y, 0 + topMargin, height - bottomMargin);
+      this.y = constrain(this.y, 0 + topMargin, height - bottomMargin);
     }
-    dx /= 2;
-    dy /= 2;
+    this.dx /= 2;
+    this.dy /= 2;
 };
 
 
 Node.prototype.draw = function() {
-    fill(featureColor);
+    fill(this.featureColor);
     stroke(0);
-    if (selected) {
+    if (this.selected) {
       strokeWeight(1.5);
     } else {
     strokeWeight(0.5);
   }
     
-    ellipse(x, y, 50, 50); // make all Features the same size
+    ellipse(this.x, this.y, 50, 50); // make all Features the same size
     fill(labelColor);
     textAlign(CENTER, BOTTOM);
-    text(featureId, x, y);
+    text(this.featureId, this.x, this.y);
 
 };
 
@@ -384,13 +380,13 @@ Edge.prototype.relax = function() {
   var vy = this.dependentFeature.y - this.myFeature.y;
   var d = mag(vx, vy);
   if (d > 0) {
-    var f = (len - d) / (d * 3);
+    var f = (this.len - d) / (d * 3);
     var dx = f * vx;
     var dy = f * vy;
-    dependentFeature.dx += dx;
-    dependentFeature.dy += dy;
-    myFeature.dx -= dx;
-    myFeature.dy -= dy;
+    this.dependentFeature.dx += dx;
+    this.dependentFeature.dy += dy;
+    this.myFeature.dx -= dx;
+    this.myFeature.dy -= dy;
   }
 };
 
