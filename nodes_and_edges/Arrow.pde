@@ -17,7 +17,8 @@ void drawArrow(float x0, float y0, float x1, float y1, float beginHeadSize, floa
   if (filled) {
     // begin head
     pushMatrix();
-    translate(x0, y0);
+//    translate(x0, y0);
+    translate((x0 + x1)/2, (y0 + y1)/2); // does this move the arrow to the middle of the line?
     rotate(angle+PI);
 
     beginShape();
@@ -30,7 +31,8 @@ void drawArrow(float x0, float y0, float x1, float y1, float beginHeadSize, floa
     popMatrix();
     // end head
     pushMatrix();
-    translate(x1, y1);
+//    translate(x1, y1);
+    translate((x0 + x1)/2, (y0 + y1)/2); // does this move the arrow to the middle of the line?
     rotate(angle);
     triangle(-endHeadSize*coeff, -endHeadSize, 
              -endHeadSize*coeff, endHeadSize, 

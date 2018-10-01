@@ -152,8 +152,7 @@ function draw() {
   background(255);
 //  textFont(myFont);  
   smooth();  
-  line(width/3,   0, width/3,   height);
-  line(width/1.5, 0, width/1.5, height);
+  line(width/2,   0, width/2,   height);
 
 //  for (var i = 0 ; i < edgeCount ; i++) {
   for (var i = 0 ; i < self.edges.length ; i++) {
@@ -229,9 +228,8 @@ function mouseDragged() {
     self.selection.y = mouseY;
     
     switch (self.selection.columnIndex) { // this where we put the code to keep nodes in their columns and inside the margins
-      case 1:  self.selection.x = constrain(self.selection.x, 0 + margin, (width/3) - margin); break;
-      case 2:  self.selection.x = constrain(self.selection.x, (width/3) + margin, (width/1.5) - margin); break;
-      case 3:  self.selection.x = constrain(self.selection.x, (width/1.5) + margin, width - margin); break;
+      case 1:  self.selection.x = constrain(self.selection.x, 0 + margin, (width/2) - margin); break;
+      case 2:  self.selection.x = constrain(self.selection.x, (width/2) + margin, width - margin); break;
       default: self.selection.x = constrain(self.selection.x, 0 + margin, width - margin);
     };
     self.selection.y = constrain(self.selection.y, 0 + topMargin, height - bottomMargin);
@@ -277,9 +275,8 @@ function Node(label) {
     var columnIndex = 0;
 
     switch (columnIndex) {
-      case 1:  x = random(0 + margin, (width/3) - margin); break;
-      case 2:  x = random((width/3) + margin, (width/1.5) - margin); break;
-      case 3:  x = random((width/1.5) + margin, width - margin); break;
+      case 1:  x = random(0 + margin, (width/2) - margin); break;
+      case 2:  x = random((width/2) + margin, width - margin); break;
       default: x = random(0 + margin, width - margin);
     };
     y = random(0 + topMargin, height - bottomMargin);
@@ -324,9 +321,8 @@ Node.prototype.update = function() {
       this.y += constrain(this.dy, -5, 5);
       
       switch (this.columnIndex) {
-        case 1:  this.x = constrain(this.x, 0 + margin, (width/3) - margin); break;
-        case 2:  this.x = constrain(this.x, (width/3) + margin, (width/1.5) - margin); break;
-        case 3:  this.x = constrain(this.x, (width/1.5) + margin, width - margin); break;
+        case 1:  this.x = constrain(this.x, 0 + margin, (width/2) - margin); break;
+        case 2:  this.x = constrain(this.x, (width/2) + margin, width - margin); break;
         default: this.x = constrain(this.x, 0 + margin, width - margin);
       };
       this.y = constrain(this.y, 0 + topMargin, height - bottomMargin);
@@ -396,9 +392,9 @@ Edge.prototype.draw = function() {
   strokeWeight(1.0);
 
   if (this.dependencyType === "predecessor") {
-    drawArrow(this.myFeature.x, this.myFeature.y, this.dependentFeature.x, this.dependentFeature.y, 8, 0, false);
+    drawArrow(this.myFeature.x, this.myFeature.y, this.dependentFeature.x, this.dependentFeature.y, 8, 0, true);
   } else {
-    drawArrow(this.myFeature.x, this.myFeature.y, this.dependentFeature.x, this.dependentFeature.y, 0, 8, false);
+    drawArrow(this.myFeature.x, this.myFeature.y, this.dependentFeature.x, this.dependentFeature.y, 0, 8, true);
   }    
 };
 
@@ -421,7 +417,9 @@ function drawArrow(x0, y0, x1, y1, beginHeadSize, endHeadSize, filled) {
     // begin head
 //    pushMatrix();
     push();
-    translate(x0, y0);
+//    translate(x0, y0);
+    translate((x0 + x1)/2, (y0 + y1)/2); //  move the arrow to the middle of the line
+
     rotate(angle+PI);
 
     beginShape();
@@ -436,7 +434,8 @@ function drawArrow(x0, y0, x1, y1, beginHeadSize, endHeadSize, filled) {
     // end head
 //    pushMatrix();
     push();
-    translate(x1, y1);
+//    translate(x1, y1);
+    translate((x0 + x1)/2, (y0 + y1)/2); //  move the arrow to the middle of the line
     rotate(angle);
     triangle(-endHeadSize*coeff, -endHeadSize, 
              -endHeadSize*coeff, endHeadSize, 

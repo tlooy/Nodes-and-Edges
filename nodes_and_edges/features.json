@@ -44,7 +44,7 @@
             "dependentFeatureName": "2- Second New Feature that starts in 2017 Q1",
             "dependentFeaturePercentDoneByStoryCount": 0,
             "dependentFeaturePercentDoneByStoryPlanEstimate": 0,
-            "dependencyType": "predecessor",
+            "dependencyType": "successor",
             "columnIndex": 2
         },
         {
@@ -56,7 +56,7 @@
             "dependentFeatureName": "1- New 2017 Q1 Feature",
             "dependentFeaturePercentDoneByStoryCount": 0,
             "dependentFeaturePercentDoneByStoryPlanEstimate": 0,
-            "dependencyType": "predecessor",
+            "dependencyType": "successor",
             "columnIndex": 1
         }
     ]

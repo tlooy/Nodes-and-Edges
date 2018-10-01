@@ -116,8 +116,8 @@ void draw() {
   background(255);
   textFont(font);  
   smooth();  
-  line(width/3,   0, width/3,   height);
-  line(width/1.5, 0, width/1.5, height);
+  line(width/2,   0, width/2,   height);
+//  line(width/1.5, 0, width/1.5, height);
 
   for (int i = 0 ; i < edgeCount ; i++) {
     edges[i].relax();
@@ -183,9 +183,9 @@ void mouseDragged() {
     selection.y = mouseY;
     
     switch (selection.columnIndex) { // this where we put the code to keep nodes in their columns and inside the margins
-      case 1:  selection.x = constrain(selection.x, 0 + margin, (width/3) - margin); break;
-      case 2:  selection.x = constrain(selection.x, (width/3) + margin, (width/1.5) - margin); break;
-      case 3:  selection.x = constrain(selection.x, (width/1.5) + margin, width - margin); break;
+      case 1:  selection.x = constrain(selection.x, 0 + margin, (width/2) - margin); break;
+      case 2:  selection.x = constrain(selection.x, (width/2) + margin, width - margin); break;
+//      case 3:  selection.x = constrain(selection.x, (width/1.5) + margin, width - margin); break;
       default: selection.x = constrain(selection.x, 0 + margin, width - margin);
     };
     selection.y = constrain(selection.y, 0 + topMargin, height - bottomMargin);

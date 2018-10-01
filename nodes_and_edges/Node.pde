@@ -23,9 +23,9 @@ class Node {
     this.featureColor = defaultFeatureColor;
 
     switch (columnIndex) {
-      case 1:  x = random(0 + margin, (width/3) - margin); break;
-      case 2:  x = random((width/3) + margin, (width/1.5) - margin); break;
-      case 3:  x = random((width/1.5) + margin, width - margin); break;
+      case 1:  x = random(0 + margin, (width/2) - margin); break;
+      case 2:  x = random((width/2) + margin, width - margin); break;
+//      case 3:  x = random((width/1.5) + margin, width - margin); break;
       default: x = random(0 + margin, width - margin);
     };
     y = random(0 + topMargin, height - bottomMargin);
@@ -69,9 +69,9 @@ class Node {
       y += constrain(dy, -5, 5);
       
       switch (columnIndex) {
-        case 1:  x = constrain(x, 0 + margin, (width/3) - margin); break;
-        case 2:  x = constrain(x, (width/3) + margin, (width/1.5) - margin); break;
-        case 3:  x = constrain(x, (width/1.5) + margin, width - margin); break;
+        case 1:  x = constrain(x, 0 + margin, (width/2) - margin); break;
+        case 2:  x = constrain(x, (width/2) + margin, width - margin); break;
+//        case 3:  x = constrain(x, (width/1.5) + margin, width - margin); break;
         default: x = constrain(x, 0 + margin, width - margin);
       };
       y = constrain(y, 0 + topMargin, height - bottomMargin);

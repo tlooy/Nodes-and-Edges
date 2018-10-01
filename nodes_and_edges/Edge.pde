@@ -44,9 +44,9 @@ class Edge {
     strokeWeight(1.0);
 
     if (dependencyType.equals("predecessor")) {
-      drawArrow(myFeature.x, myFeature.y, dependentFeature.x, dependentFeature.y, 8, 0, false);
+      drawArrow(myFeature.x, myFeature.y, dependentFeature.x, dependentFeature.y, 8, 0, true);
     } else {
-      drawArrow(myFeature.x, myFeature.y, dependentFeature.x, dependentFeature.y, 0, 8, false);
+      drawArrow(myFeature.x, myFeature.y, dependentFeature.x, dependentFeature.y, 0, 8, true);
     }    
   }
 }
