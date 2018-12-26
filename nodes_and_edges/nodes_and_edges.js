@@ -50,7 +50,85 @@ var featureValues = [];
 
 function preload() {
 //  myFont = loadFont('./QumpellkaNo12.otf');
-  self.featureValues = loadJSON("http://localhost:8000/Documents/GitHub/Nodes-and-Edges/nodes_and_edges/features.json");
+//  self.featureValues = loadJSON("http://localhost:8000/Documents/GitHub/Nodes-and-Edges/nodes_and_edges/features.json");
+
+self.featureValues =
+[
+        {
+            "myFeatureId": "F21816",
+            "myFeatureName": "1- New 2017 Q1 Feature",
+            "myFeaturePercentDoneByStoryCount": 0,
+            "myFeaturePercentDoneByStoryPlanEstimate": 0,
+            "dependentFeatureId": "F21817",
+            "dependentFeatureName": "2- Second New Feature that starts in 2017 Q1",
+            "dependentFeaturePercentDoneByStoryCount": 0,
+            "dependentFeaturePercentDoneByStoryPlanEstimate": 0,
+            "dependencyType": "successor",
+            "columnIndex": 1
+        },
+        {
+            "myFeatureId": "F21816",
+            "myFeatureName": "1- New 2017 Q1 Feature",
+            "myFeaturePercentDoneByStoryCount": 0,
+            "myFeaturePercentDoneByStoryPlanEstimate": 0,
+            "dependentFeatureId": "F21819",
+            "dependentFeatureName": "4 - This feature is a predecessor to 1",
+            "dependentFeaturePercentDoneByStoryCount": 0,
+            "dependentFeaturePercentDoneByStoryPlanEstimate": 0,
+            "dependencyType": "successor",
+            "columnIndex": 1
+        },
+        {
+            "myFeatureId": "F21817",
+            "myFeatureName": "2- Second New Feature that starts in 2017 Q1",
+            "myFeaturePercentDoneByStoryCount": 0,
+            "myFeaturePercentDoneByStoryPlanEstimate": 0,
+            "dependentFeatureId": "F21818",
+            "dependentFeatureName": "3- Third Feature - used to test Dependencies",
+            "dependentFeaturePercentDoneByStoryCount": 0,
+            "dependentFeaturePercentDoneByStoryPlanEstimate": 0,
+            "dependencyType": "successor",
+            "columnIndex": 1
+        },
+        {
+            "myFeatureId": "F21818",
+            "myFeatureName": "3- Third Feature - used to test Dependencies",
+            "myFeaturePercentDoneByStoryCount": 0,
+            "myFeaturePercentDoneByStoryPlanEstimate": 0,
+            "dependentFeatureId": "F21817",
+            "dependentFeatureName": "2- Second New Feature that starts in 2017 Q1",
+            "dependentFeaturePercentDoneByStoryCount": 0,
+            "dependentFeaturePercentDoneByStoryPlanEstimate": 0,
+            "dependencyType": "successor",
+            "columnIndex": 2
+        },
+        {
+            "myFeatureId": "F21817",
+            "myFeatureName": "2- Second New Feature that starts in 2017 Q1",
+            "myFeaturePercentDoneByStoryCount": 0,
+            "myFeaturePercentDoneByStoryPlanEstimate": 0,
+            "dependentFeatureId": "F21816",
+            "dependentFeatureName": "1- New 2017 Q1 Feature",
+            "dependentFeaturePercentDoneByStoryCount": 0,
+            "dependentFeaturePercentDoneByStoryPlanEstimate": 0,
+            "dependencyType": "successor",
+            "columnIndex": 1
+        },
+        {
+            "myFeatureId": "xxxx",
+            "myFeatureName": "1- New 2017 Q1 Feature",
+            "myFeaturePercentDoneByStoryCount": 0,
+            "myFeaturePercentDoneByStoryPlanEstimate": 0,
+            "dependentFeatureId": "F21819",
+            "dependentFeatureName": "2- Second New Feature that starts in 2017 Q1",
+            "dependentFeaturePercentDoneByStoryCount": 0,
+            "dependentFeaturePercentDoneByStoryPlanEstimate": 0,
+            "dependencyType": "successor",
+            "columnIndex": 1
+        }
+    ]
+
+
 };
 
 function setup() { 
